@@ -1,11 +1,36 @@
 #!/bin/bash
 #
-# Compile script for FSociety kernel
+# Compile script for Quantum kernel
 # Copyright (C) 2020-2021 Adithya R.
 
+cyan="\033[96m"
+green="\033[92m"
+red="\033[91m"
+blue="\033[94m"
+yellow="\033[93m"
+
+echo -e "$cyan===========================\033[0m"
+echo -e "$cyan= START COMPILING KERNEL  =\033[0m"
+echo -e "$cyan===========================\033[0m"
+
+echo -e "$yellow...LOADING...\033[0m"
+
+echo -e -ne "$green## (10%\r"
+sleep 0.7
+echo -e -ne "$green#####                     (33%)\r"
+sleep 0.7
+echo -e -ne "$green#############             (66%)\r"
+sleep 0.7
+echo -e -ne "$green#######################   (100%)\r"
+echo -ne "\n"
+
+echo -e -n "$yellow\033[104mPRESS ENTER TO CONTINUE\033[0m"
+read P
+echo  $P
+
 SECONDS=0 # builtin bash timer
-ZIPNAME="FSociety-surya-$(date '+%Y%m%d-%H%M').zip"
-TC_DIR="$(pwd)/tc/clang-r498229"
+ZIPNAME="Quantum_Moon-kernel-surya-$(date '+%Y%m%d-%H%M').zip"
+TC_DIR="/workspace/clang-r498229"
 AK3_DIR="$(pwd)/android/AnyKernel3"
 DEFCONFIG="surya_defconfig"
 
@@ -17,11 +42,11 @@ fi
 export PATH="$TC_DIR/bin:$PATH"
 
 if ! [ -d "$TC_DIR" ]; then
-	echo "AOSP clang not found! Cloning to $TC_DIR..."
-	if ! git clone --depth=1 -b 17 https://gitlab.com/ThankYouMario/android_prebuilts_clang-standalone "$TC_DIR"; then
-		echo "Cloning failed! Aborting..."
-		exit 1
-	fi
+   echo "Google AOSP Clang not found! Cloning to $TC_DIR..."
+   if ! git clone --depth=1 -b 17 https://gitlab.com/ThankYouMario/android_prebuilts_clang-standalone "$TC_DIR"; then
+      echo "Cloning failed! Aborting..."
+      exit 1
+   fi
 fi
 
 if [[ $1 = "-r" || $1 = "--regen" ]]; then
@@ -56,14 +81,14 @@ if [ -f "$kernel" ] && [ -f "$dtb" ] && [ -f "$dtbo" ]; then
 	echo -e "\nKernel compiled succesfully! Zipping up...\n"
 	if [ -d "$AK3_DIR" ]; then
 		cp -r $AK3_DIR AnyKernel3
-	elif ! git clone -q https://github.com/rd-stuffs/AnyKernel3 -b FSociety; then
+	elif ! git clone -q https://github.com/QuantumPrjkt/AnyKernel3.git -b Quantum AnyKernel3; then
 		echo -e "\nAnyKernel3 repo not found locally and couldn't clone from GitHub! Aborting..."
 		exit 1
 	fi
 	cp $kernel $dtb $dtbo AnyKernel3
 	rm -rf out/arch/arm64/boot
 	cd AnyKernel3
-	git checkout FSociety &> /dev/null
+	git checkout Quantum &> /dev/null
 	zip -r9 "../$ZIPNAME" * -x .git README.md *placeholder
 	cd ..
 	rm -rf AnyKernel3
