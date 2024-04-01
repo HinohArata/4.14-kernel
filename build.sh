@@ -35,7 +35,7 @@ ZIPNAME="Quantum_Moon-kernel-surya-$(date '+%Y%m%d-%H%M').zip"
 TC_DIR="/workspace/clang-r498229"
 AK3_DIR="$(pwd)/android/AnyKernel3"
 DEFCONFIG="surya_defconfig"
-DEVICE="surya"
+DEVICE="Poco X3 NFC (Surya)"
 VERSION="4.14.340"
 KERNELTYPE="Moon"
 CSTRING=$("$TC_DIR"/bin/clang --version | head -n 1 | perl -pe 's/\(http.*?\)//gs' | sed -e 's/  */ /g' -e 's/[[:space:]]*$//')
@@ -142,15 +142,19 @@ tg_fail() {
 
 # Ship it to the CI channel
 NOW=$(date +%d/%m/%Y-%H:%M)
+DATE=$(TZ=Asia/Jakarta date)
+DISTRO=$(source /etc/os-release && echo ${NAME})
+LINUX="4.14.340"
     tg_ship "<b>-------- NEW UPDATES --------</b>" \
 	    " " \
             "Compiling with <code>$(nproc --all)</code> CPUs" \
 	    "---------------------------------------" \
+	    "<b>OS	:</b><code> ${DISTRO}</code>" \
             "<b>Device	:</b><code> ${DEVICE}</code>" \
 	    "<b>Kernel	:</b><code> ${KERNEL}</code>" \
 	    "<b>Compiler:</b><code> ${CSTRING}</code>" \
             "<b>Version	:</b><code> ${KERNELTYPE}</code>" \
-	    "<b>Clocked	:</b><code> ${NOW}</code>" \
+	    "<b>Date 	:</b><code> ${DATE}" \
+	    "<b>Linux	:</b><code> ${LINUX}</code>" \
 	    "---------------------------------------" \
-            " " \
-            "Tell me if encountered any bugs!"
+            "<b>Notes	:</b> Tell me if encountered any bugs!"
