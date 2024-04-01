@@ -33,6 +33,10 @@ ZIPNAME="Quantum_Moon-kernel-surya-$(date '+%Y%m%d-%H%M').zip"
 TC_DIR="/workspace/clang-r498229"
 AK3_DIR="$(pwd)/android/AnyKernel3"
 DEFCONFIG="surya_defconfig"
+DEVICE="surya"
+VERSION="4.14.340"
+KERNELTYPE="Moon"
+CSTRING=$("$TC_DIR"/bin/clang --version | head -n 1 | perl -pe 's/\(http.*?\)//gs' | sed -e 's/  */ /g' -e 's/[[:space:]]*$//')
 
 if test -z "$(git rev-parse --show-cdup 2>/dev/null)" &&
    head=$(git rev-parse --verify HEAD 2>/dev/null); then
@@ -90,6 +94,7 @@ if [ -f "$kernel" ] && [ -f "$dtb" ] && [ -f "$dtbo" ]; then
 	cd AnyKernel3
 	git checkout Quantum &> /dev/null
 	zip -r9 "../$ZIPNAME" * -x .git README.md *placeholder
+	
 	cd ..
 	rm -rf AnyKernel3
 	echo -e "\nCompleted in $((SECONDS / 60)) minute(s) and $((SECONDS % 60)) second(s) !"
@@ -98,3 +103,49 @@ else
 	echo -e "\nCompilation failed!"
 	exit 1
 fi
+
+# Telegram
+CHATID="-1002042405518" # Group/channel chatid (use rose/userbot to get it)
+TELEGRAM_TOKEN="6779607065:AAEzVWDTx1OFDE_gQu-FzhrS87rXd68LxSE"
+
+# Export Telegram.sh
+TELEGRAM_FOLDER="${HOME}"/telegram
+if ! [ -d "${TELEGRAM_FOLDER}" ]; then
+    git clone https://github.com/fabianonline/telegram.sh/ "${TELEGRAM_FOLDER}"
+fi
+
+TELEGRAM="${TELEGRAM_FOLDER}"/telegram
+tg_cast() {
+        curl -s -X POST https://api.telegram.org/bot"$TELEGRAM_TOKEN"/sendMessage -d disable_we>
+                for POST in "${@}"; do
+                        echo "${POST}"
+                done
+        )" &> /dev/null
+}
+tg_ship() {
+    "${TELEGRAM}" -f "${ZIPNAME}" -t "${TELEGRAM_TOKEN}" -c "${CHATID}" -H \
+    "$(
+                for POST in "${@}"; do
+                        echo "${POST}"
+                done
+    )"
+}
+tg_fail() {
+    "${TELEGRAM}" -f "${LOGS}" -t "${TELEGRAM_TOKEN}" -c "${CHATID}" -H \
+    "$(
+                for POST in "${@}"; do
+                        echo "${POST}"
+                done
+    )"
+}
+
+# Ship it to the CI channel
+NOW=$(date +%d/%m/%Y-%H:%M)
+    tg_ship "<b>-------- Kontol --------</b>" \
+            "" \
+            "<b>Device:</b> ${DEVICE}" \
+	    "<b>Compiler:* ${CSTRING}" \
+            "<b>Version:</b> $(make kernelversion) ${KERNELTYPE}" \
+	    "<b>Clocked at:* ${NOW}" \
+            "" \
+            "Leave a comment below if encountered any bugs!"
