@@ -29,6 +29,8 @@ read P
 echo  $P
 
 SECONDS=0 # builtin bash timer
+
+KERNEL="Quantum:[Moon]"
 ZIPNAME="Quantum_Moon-kernel-surya-$(date '+%Y%m%d-%H%M').zip"
 TC_DIR="/workspace/clang-r498229"
 AK3_DIR="$(pwd)/android/AnyKernel3"
@@ -86,7 +88,7 @@ if [ -f "$kernel" ] && [ -f "$dtb" ] && [ -f "$dtbo" ]; then
 	if [ -d "$AK3_DIR" ]; then
 		cp -r $AK3_DIR AnyKernel3
 	elif ! git clone -q https://github.com/QuantumPrjkt/AnyKernel3.git -b Quantum AnyKernel3; then
-		echo -e "\nAnyKernel3 repo not found locally and couldn't clone from GitHub! Aborting..."
+		echo -e "\nAnyKernel3 repo not found locally and could not clone from GitHub! Aborting..."
 		exit 1
 	fi
 	cp $kernel $dtb $dtbo AnyKernel3
@@ -94,7 +96,6 @@ if [ -f "$kernel" ] && [ -f "$dtb" ] && [ -f "$dtbo" ]; then
 	cd AnyKernel3
 	git checkout Quantum &> /dev/null
 	zip -r9 "../$ZIPNAME" * -x .git README.md *placeholder
-	
 	cd ..
 	rm -rf AnyKernel3
 	echo -e "\nCompleted in $((SECONDS / 60)) minute(s) and $((SECONDS % 60)) second(s) !"
@@ -105,7 +106,7 @@ else
 fi
 
 # Telegram
-CHATID="-1002042405518" # Group/channel chatid (use rose/userbot to get it)
+CHATID="-1002063590324" # Group/channel chatid (use rose/userbot to get it)
 TELEGRAM_TOKEN="6779607065:AAEzVWDTx1OFDE_gQu-FzhrS87rXd68LxSE"
 
 # Export Telegram.sh
@@ -116,7 +117,7 @@ fi
 
 TELEGRAM="${TELEGRAM_FOLDER}"/telegram
 tg_cast() {
-        curl -s -X POST https://api.telegram.org/bot"$TELEGRAM_TOKEN"/sendMessage -d disable_we>
+        curl -s -X POST https://api.telegram.org/bot"$TELEGRAM_TOKEN"/sendMessage -d disable_web_page_preview="true" -d chat_id="$CHATID" -d "parse_mode=MARKDOWN" -d text="$(
                 for POST in "${@}"; do
                         echo "${POST}"
                 done
@@ -141,11 +142,15 @@ tg_fail() {
 
 # Ship it to the CI channel
 NOW=$(date +%d/%m/%Y-%H:%M)
-    tg_ship "<b>-------- Kontol --------</b>" \
-            "" \
-            "<b>Device:</b> ${DEVICE}" \
-	    "<b>Compiler:* ${CSTRING}" \
-            "<b>Version:</b> $(make kernelversion) ${KERNELTYPE}" \
-	    "<b>Clocked at:* ${NOW}" \
-            "" \
-            "Leave a comment below if encountered any bugs!"
+    tg_ship "<b>-------- NEW UPDATES --------</b>" \
+	    " " \
+            "Compiling with <code>$(nproc --all)</code> CPUs" \
+	    "---------------------------------------" \
+            "<b>Device	:</b><code> ${DEVICE}</code>" \
+	    "<b>Kernel	:</b><code> ${KERNEL}</code>" \
+	    "<b>Compiler:</b><code> ${CSTRING}</code>" \
+            "<b>Version	:</b><code> ${KERNELTYPE}</code>" \
+	    "<b>Clocked	:</b><code> ${NOW}</code>" \
+	    "---------------------------------------" \
+            " " \
+            "Tell me if encountered any bugs!"
