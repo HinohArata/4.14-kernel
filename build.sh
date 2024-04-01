@@ -142,19 +142,18 @@ tg_fail() {
 
 # Ship it to the CI channel
 NOW=$(date +%d/%m/%Y-%H:%M)
-DATE=$(TZ=Asia/Jakarta date)
-DISTRO=$(source /etc/os-release && echo ${NAME})
+DISTRO=$(source /etc/os-release && echo ${PRETTY_NAME})
 LINUX="4.14.340"
+DATE=$(TZ='Asia/Jakarta' date)
     tg_ship "<b>-------- NEW UPDATES --------</b>" \
-	    " " \
             "Compiling with <code>$(nproc --all)</code> CPUs" \
-	    "---------------------------------------" \
-	    "<b>OS	:</b><code> ${DISTRO}</code>" \
-            "<b>Device	:</b><code> ${DEVICE}</code>" \
-	    "<b>Kernel	:</b><code> ${KERNEL}</code>" \
-	    "<b>Compiler:</b><code> ${CSTRING}</code>" \
-            "<b>Version	:</b><code> ${KERNELTYPE}</code>" \
-	    "<b>Date 	:</b><code> ${DATE}" \
-	    "<b>Linux	:</b><code> ${LINUX}</code>" \
-	    "---------------------------------------" \
-            "<b>Notes	:</b> Tell me if encountered any bugs!"
+            "---------------------------------------" \
+            "<b>HOST    :</b><code> ${DISTRO}</code>" \
+            "<b>Device  :</b><code> ${DEVICE}</code>" \
+            "<b>Version :</b><code> ${KERNELTYPE}</code>" \
+            "<b>Linux   :</b><code> ${LINUX}</code>" \
+            "<b>Kernel  :</b><code> ${KERNEL}</code>" \
+            "<b>Date    :</b><code> ${DATE}</code>" \
+            "<b>Compiler:</b><code> ${CSTRING}</code>" \
+            "---------------------------------------" \
+            "<b>Notes   :</b> Tell me if encountered any bugs!"
