@@ -143,7 +143,7 @@ tg_fail() {
 # Ship it to the CI channel
 NOW=$(date +%d/%m/%Y-%H:%M)
 DISTRO=$(source /etc/os-release && echo ${PRETTY_NAME})
-LINUX="4.14.340"
+LINUX="4.14.341"
 DATE=$(TZ='Asia/Jakarta' date)
     tg_ship "<b>-------- NEW UPDATES --------</b>" \
             "Compiling with <code>$(nproc --all)</code> CPUs" \
