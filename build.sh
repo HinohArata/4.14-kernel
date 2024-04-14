@@ -30,14 +30,14 @@ echo  $P
 
 SECONDS=0 # builtin bash timer
 
-KERNEL="Quantum:[Moon]"
-ZIPNAME="Quantum_Moon-kernel-surya-$(date '+%Y%m%d-%H%M').zip"
+KERNEL="Skyhigh-kernel"
+ZIPNAME="Skyyhigh-kernel-surya-$(date '+%Y%m%d-%H%M').zip"
 TC_DIR="/workspace/clang-r498229"
 AK3_DIR="$(pwd)/android/AnyKernel3"
 DEFCONFIG="surya_defconfig"
 DEVICE="Poco X3 NFC (Surya)"
-VERSION="4.14.340"
-KERNELTYPE="Moon"
+VERSION="4.14.341"
+KERNELTYPE="KSU"
 CSTRING=$("$TC_DIR"/bin/clang --version | head -n 1 | perl -pe 's/\(http.*?\)//gs' | sed -e 's/  */ /g' -e 's/[[:space:]]*$//')
 
 if test -z "$(git rev-parse --show-cdup 2>/dev/null)" &&
@@ -87,7 +87,7 @@ if [ -f "$kernel" ] && [ -f "$dtb" ] && [ -f "$dtbo" ]; then
 	echo -e "\nKernel compiled succesfully! Zipping up...\n"
 	if [ -d "$AK3_DIR" ]; then
 		cp -r $AK3_DIR AnyKernel3
-	elif ! git clone -q https://github.com/QuantumPrjkt/AnyKernel3.git -b Quantum AnyKernel3; then
+	elif ! git clone -q https://github.com/HinohArata/AnyKernel3.git -b master AnyKernel3; then
 		echo -e "\nAnyKernel3 repo not found locally and could not clone from GitHub! Aborting..."
 		exit 1
 	fi
@@ -156,4 +156,4 @@ DATE=$(TZ='Asia/Jakarta' date)
             "<b>Date :</b><code> ${DATE}</code>" \
             "<b>Compiler :</b><code> ${CSTRING}</code>" \
             "------------------------------------" \
-            "<b>Notes   :</b> Tell me if found any bugs!"
+            "<b>Notes :</b> Tell me if found any bugs!"
