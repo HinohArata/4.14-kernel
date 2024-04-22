@@ -36,7 +36,7 @@ TC_DIR="/workspace/clang-r498229"
 AK3_DIR="$(pwd)/android/AnyKernel3"
 DEFCONFIG="surya_defconfig"
 DEVICE="Poco X3 NFC (Surya)"
-VERSION="4.14.341"
+VERSION="4.14.343"
 KERNELTYPE="KSU"
 CSTRING=$("$TC_DIR"/bin/clang --version | head -n 1 | perl -pe 's/\(http.*?\)//gs' | sed -e 's/  */ /g' -e 's/[[:space:]]*$//')
 
@@ -143,7 +143,7 @@ tg_fail() {
 # Ship it to the CI channel
 NOW=$(date +%d/%m/%Y-%H:%M)
 DISTRO=$(source /etc/os-release && echo ${PRETTY_NAME})
-LINUX="4.14.341"
+LINUX="4.14.343"
 DATE=$(TZ='Asia/Jakarta' date)
     tg_ship "<b>-------- NEW UPDATES --------</b>" \
             "Compiling with <code>$(nproc --all)</code> CPUs" \
