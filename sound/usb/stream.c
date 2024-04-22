@@ -294,12 +294,15 @@ static struct snd_pcm_chmap_elem *convert_chmap(int channels, unsigned int bits,
 
 	chmap->channels = channels;
 
-	if (bits) {
-		for (; bits && *maps; maps++, bits >>= 1) {
-			if (bits & 1)
-				chmap->map[c++] = *maps;
-			if (c == chmap->channels)
-				break;
+	if (protocol == UAC_VERSION_3) {
+		switch (channels) {
+		case 1:
+			chmap->map[0] = SNDRV_CHMAP_MONO;
+			break;
+		case 2:
+			chmap->map[0] = SNDRV_CHMAP_FL;
+			chmap->map[1] = SNDRV_CHMAP_FR;
+			break;
 		}
 	} else {
 		int c = 0;
@@ -307,9 +310,12 @@ static struct snd_pcm_chmap_elem *convert_chmap(int channels, unsigned int bits,
 			protocol == UAC_VERSION_2 ? uac2_maps : uac1_maps;
 
 		if (bits) {
-			for (; bits && *maps; maps++, bits >>= 1)
+			for (; bits && *maps; maps++, bits >>= 1) {
 				if (bits & 1)
 					chmap->map[c++] = *maps;
+				if (c == chmap->channels)
+				    break;
+			}
 		} else {
 			/*
 			 * If we're missing wChannelConfig, then guess something
@@ -797,4 +803,3 @@ int snd_usb_parse_audio_interface(struct snd_usb_audio *chip, int iface_no)
 	}
 	return 0;
 }
-
